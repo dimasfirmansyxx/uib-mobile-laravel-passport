@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Validator;
 use App\Models\User;
+use Auth;
 
 class AuthController extends Controller
 {
@@ -72,6 +73,21 @@ class AuthController extends Controller
                 'status' => true, 
                 'message' => 'Login Success',
                 'data' => $response
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false,'message' => $e->getMessage()], 500);
+        }
+    }
+
+    public function logout(Request $request)
+    {
+        try {
+            $user = Auth::user();
+            $user->tokens()->delete();
+
+            return response()->json([
+                'status' => true, 
+                'message' => 'Logout Success',
             ], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => false,'message' => $e->getMessage()], 500);
