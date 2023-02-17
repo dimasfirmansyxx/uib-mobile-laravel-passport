@@ -70,9 +70,9 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => true, 
-                'message' => 'Register Success',
+                'message' => 'Login Success',
                 'data' => $response
-            ], 201);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json(['status' => false,'message' => $e->getMessage()], 500);
         }
