@@ -43,4 +43,38 @@ class AuthController extends Controller
             return response()->json(['status' => false,'message' => $e->getMessage()], 500);
         }
     }
+
+    public function login(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false,
+                    'message' => $validator->errors()->first()
+                ], 400);
+            }
+
+            $user = User::where('email', $request->email)->first();
+            if (!$user || !password_verify($request->password, $user->password)) {
+                return response()->json(['status' => false, 'message' => 'Email or Password incorrect'], 400);
+            }
+
+            $response = [
+                'access_token' => $user->createToken($user->email)->accessToken,
+                'user' => $user
+            ];
+
+            return response()->json([
+                'status' => true, 
+                'message' => 'Register Success',
+                'data' => $response
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['status' => false,'message' => $e->getMessage()], 500);
+        }
+    }
 }
